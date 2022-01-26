@@ -1,0 +1,13 @@
+{
+  "name": "socket-chat-example",
+  "version": "0.0.1",
+  "description": "Laboratorio 3 Tarce",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.1.7",
+    "socket.io": "^4.4.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

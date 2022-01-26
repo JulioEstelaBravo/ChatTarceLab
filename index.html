@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CHAT TARCE</title>
+    <style>
+        .oscuro {
+            background:
+                linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
+                linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
+                linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
+                linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
+                linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+                linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+            background-color: #131313;
+            background-size: 20px 20px;
+            color: white;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #6d695c;
+            background-color: #556;
+            background-color: #fff;
+            background-image:
+                linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+                linear-gradient(#eee .1em, transparent .1em);
+            background-size: 100% 1.2em;
+        }
+
+        #contenedor {
+            width: 100%;
+            padding-top: 20px;
+            margin: 0 auto;
+
+        }
+
+        #ventana {
+            background: url(food.png);
+            margin: 0 auto;
+            width: 800px;
+            height: 600px;
+            border: 1px black solid;
+
+        }
+
+        /* Barra superior */
+        #barra {
+            width: 100%;
+            height: 35px;
+            background-color: rgb(42, 42, 42);
+            color: white;
+            border: 1px black solid;
+            padding: 5px;
+            float: left;
+        }
+
+        #usuariosChat {
+            width: 720px;
+            float: left;
+        }
+
+        /* Sala de mensajes */
+        #conteMensajes {
+            float: left;
+            height: 500px;
+            width: 100%;
+            border-bottom: 1px black solid;
+            overflow-y: scroll;
+            padding-left: 10px;
+        }
+
+        /* Barra Inferior */
+        #formD {
+            float: left;
+            height: 63px;
+            padding-top: 12px;
+            margin: 0;
+            width: 100%;
+        }
+
+        #userName {
+            width: 150px;
+            padding-left: 10px;
+            padding-right: 10px;
+
+            float: left;
+            text-align: center;
+        }
+
+        #input {
+            width: 540px;
+            float: left;
+        }
+
+        #send {
+            width: 100px;
+            padding-left: 10px;
+            padding-right: 10px;
+            float: left;
+        }
+
+        /* Ventana de nombre usuario*/
+        #usuarioD {
+            margin: 0 auto;
+            width: 60%;
+            height: 150px;
+            padding: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <div class="container" id="contenedor">
+
+        <!-- Ventana Chat -->
+        <div id="ventana" style="display: none">
+            <div id="barra">
+                <i style="float: left;width: 20px;" class="bi bi-person-fill"></i>
+                <div id="usuariosChat"></div>
+                <i style="width: 40px;cursor: pointer;" id="copiar" class="bi bi-clipboard" onclick="copiar()"></i>
+                <i style="width: 40px;cursor: pointer;" id="copiarOK" class="bi bi-clipboard-check"></i>
+                <span style="margin-left: 5px;"></span>
+                <i style="width: 40px;cursor: pointer;" class="bi bi-toggle-off" id="cOff" style="cursor: pointer;"
+                    onclick="colorCambio(1)"></i>
+                <i style="width: 40px;cursor: pointer;" class="bi bi-toggle-on" id="cOn" style="cursor: pointer;"
+                    onclick="colorCambio(0)"></i>
+            </div>
+            <div id="conteMensajes"></div>
+            <div id="formD">
+                <form id="form" action="">
+                    <label id="userName">
+                        <span class="btn btn-outline-primary" id="textName" onclick="setNombre(true)"></span>
+                    </label>
+                    <input id="input" autocomplete="off" class="form-control" required maxlength="100" required />
+                    <div id="send"><button class="btn btn-success"><i class="bi bi-chevron-right"></i></button></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Ventana Inicial-Nombre -->
+        <div id="vUsuario" class="container">
+            <h1 style="text-align: center;">Bienvenidos-Welcome-Bienvenue-Welkom-Benvenuto-Benvido-Ongietorri</h1>
+            <br>
+            <div id=usuarioD>
+                <form id="formUsuario" action="">
+                    <div class="input-group mb-3">
+                        <input type="text" id="inputUsuario" class="form-control" autocomplete="off"
+                            placeholder="Nombre de Usuario" maxlength="15" minlength="2" required />
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Empezar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    var form = document.getElementById('form');
+    var formU = document.getElementById('formUsuario');
+    var usuarios = document.getElementById('usuariosChat')
+    var mensajesD = document.getElementById('conteMensajes')
+
+    var input = document.getElementById('input');
+    var inputU = document.getElementById('inputUsuario');
+
+    document.getElementById("cOff").style.display = "none"
+    document.getElementById("copiarOK").style.display = "none"
+
+    // Evento del formulario de enviar mensaje
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+        }
+    });
+
+    // Evento de formulario de enviar el nombre del usuario
+    formU.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (inputU.value) {
+            socket.emit('user', inputU.value);
+            document.getElementById("textName").innerHTML = inputU.value
+            document.cookie = `usuario=${inputU.value}; max-age=3600; path=/; secure`;
+            setNombre(false)
+        }
+    })
+
+    // Modificar color
+    socket.on('color', function (msg) {
+        document.getElementById("textName").style.color = msg
+    })
+
+    // Recibir los usuarios
+    socket.on('users chat', function (msg) {
+        usuarios.innerHTML = msg
+    })
+
+    // Recibir mensaje nuevo
+    socket.on('chat message', function (msgJSON) {
+        var msg = JSON.parse(msgJSON)
+        addMessage(msg.author, msg.text, msg.color, msg.time)
+    });
+
+    // Recibir todos los mensajes
+    socket.on('history', function (msg) {
+        var historial = JSON.parse(msg)
+        historial.forEach(d => {
+            addMessage(d.author, d.text, d.color, d.time)
+        })
+    })
+
+    // Función para añadir un mensaje al contenedor de mensajes
+    function addMessage(author, message, color, time) {
+        dt = new Date(time)
+        salida = document.createElement('p')
+        contenido = document.createElement('span')
+
+        contenido.innerHTML = '@' + author
+        contenido.style.color = color
+
+        salida.appendChild(contenido)
+        salida.innerHTML += " " + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
+            + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
+            + "  " + message + '</p>'
+        mensajesD.appendChild(salida)
+        mensajesD.scrollTo(0, mensajesD.scrollHeight);
+    }
+
+    // Función encargada de mostrar u ocultar el formulario del nombre
+    function setNombre(type) {
+        if (type) {
+            document.getElementById("ventana").style.display = "none"
+            document.getElementById("vUsuario").style.display = ""
+        } else {
+            document.getElementById("ventana").style.display = ""
+            document.getElementById("vUsuario").style.display = "none"
+            mensajesD.scrollTo(0, mensajesD.scrollHeight);
+        }
+    }
+
+    // Función para cambiar el tema del chat
+    function colorCambio(type) {
+        mensajesD.classList.toggle("oscuro")
+        document.getElementById("formD").classList.toggle("oscuro")
+        if (type == 1) {
+            document.getElementById("cOff").style.display = "none"
+            document.getElementById("cOn").style.display = ""
+            document.getElementById("input").style.backgroundColor = ""
+        } else {
+            document.getElementById("cOff").style.display = ""
+            document.getElementById("cOn").style.display = "none"
+            document.getElementById("input").style.backgroundColor = "rgb(200, 200, 200)"
+        }
+    }
+
+    // Función para copiar el chat
+    function copiar() {
+        var seleccion = document.createRange()
+        seleccion.selectNode(mensajesD)
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(seleccion);
+        document.execCommand('copy');
+        window.getSelection().removeRange(seleccion);
+
+        document.getElementById("copiar").style.display = "none"
+        document.getElementById("copiarOK").style.display = ""
+        setTimeout(function () {
+            document.getElementById("copiar").style.display = ""
+            document.getElementById("copiarOK").style.display = "none"
+        }, 1000)
+    }
+
+</script>
+
+</html>
+
+

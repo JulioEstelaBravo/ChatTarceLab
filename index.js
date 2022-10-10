@@ -9,12 +9,13 @@ var colores = ['red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange']
 colores.sort(function(a,b) { return Math.random() > 0.5; })
 var countUsersAll = 0
 
- const uri; //aqui iria el enlace y la clave de la base de datos por seguridad lo hemos quitado
- //'mongodb+srv://<user>:<password>@cluster0.yi9dg.mongodb.net/<nombre_base_datos>?retryWrites=true&w=majority'
-// ===========< MONGODB >==========
+ const uri ='mongodb://nico:password@localhost:27017/ChatTarceLab?authSource=admin'
+ 
+
+ // ===========< MONGODB >==========
 // Conexión
  mongoose.connect(
-   uri,
+    uri,
   {useNewUrlParser: true, useUnifiedTopology: true},
    err => {
        if (err) throw err;      
